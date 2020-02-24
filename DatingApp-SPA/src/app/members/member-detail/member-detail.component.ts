@@ -26,9 +26,9 @@ export class MemberDetailComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    //this route.data is used when using resolver,
+    // this route.data is used when using resolver,
     // the resolver will resolve  user object into the route,
-    //therefore we dont have to call userService.getUser from component.
+    // therefore we dont have to call userService.getUser from component.
     this.route.data.subscribe(data => {
       const user = "user";
       this.user = data[user];

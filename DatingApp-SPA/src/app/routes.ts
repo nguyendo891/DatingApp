@@ -14,7 +14,7 @@ import { PreventUnsavedChanges } from "./_guards/prevent-unsaved-changes.guard";
 export const appRoutes: Routes = [
   { path: "", component: HomeComponent },
   {
-    path: "", //locahost:4200/''+ members
+    path: "", // locahost:4200/''+ members
     runGuardsAndResolvers: "always",
     canActivate: [AuthGuard],
     children: [

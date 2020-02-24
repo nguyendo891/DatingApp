@@ -12,9 +12,10 @@ import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 import { RouterModule } from "@angular/router";
 import { JwtModule } from "@auth0/angular-jwt";
 import { NgxGalleryModule } from "@nomadreservations/ngx-gallery";
-//this "ngx-gallery" is used Renderer which is nolonger supported by Angular 9
-//use "@nomadreservations/ngx-gallery" instead, it is used Renderer2
-//import { NgxGalleryModule } from "ngx-gallery";
+import { FileUploadModule } from "ng2-file-upload";
+// this "ngx-gallery" is used Renderer which is nolonger supported by Angular 9
+// use "@nomadreservations/ngx-gallery" instead, it is used Renderer2
+// import { NgxGalleryModule } from "ngx-gallery";
 
 import { AppComponent } from "./app.component";
 import { NavComponent } from "./nav/nav.component";
@@ -37,12 +38,13 @@ import { MemberListResolver } from "./_resolvers/member-list.resolver";
 import { MemberEditComponent } from "./members/member-edit/member-edit.component";
 import { MemberEditResolver } from "./_resolvers/member-edit.resolver";
 import { PreventUnsavedChanges } from "./_guards/prevent-unsaved-changes.guard";
+import { PhotoEditorComponent } from "./members/photo-editor/photo-editor.component";
 
 export function tokenGetter() {
   return localStorage.getItem("token");
 }
 
-//this fix the error of hammerJs for swiping left and right in angular 8
+// this fix the error of hammerJs for swiping left and right in angular 8
 // export class CustomHammerConfig extends HammerGestureConfig {
 //   overrides = {
 //     pinch: { enable: false },
@@ -61,7 +63,8 @@ export function tokenGetter() {
     MessagesComponent,
     MemberCardComponent,
     MemberDetailComponent,
-    MemberEditComponent
+    MemberEditComponent,
+    PhotoEditorComponent
   ],
   imports: [
     BrowserModule,
@@ -70,11 +73,12 @@ export function tokenGetter() {
     BrowserAnimationsModule,
     BsDropdownModule.forRoot(),
     TabsModule.forRoot(),
+    FileUploadModule,
     RouterModule.forRoot(appRoutes),
     NgxGalleryModule,
     JwtModule.forRoot({
       config: {
-        tokenGetter: tokenGetter,
+        tokenGetter,
         whitelistedDomains: ["localhost:5000"],
         blacklistedRoutes: ["localhost:5000/api/auth"]
       }
@@ -88,7 +92,7 @@ export function tokenGetter() {
     UserService,
     MemberDetailResolver,
     MemberListResolver,
-    //this fix the error of hammerJs for swiping left and right in angular 8
+    // this fix the error of hammerJs for swiping left and right in angular 8
     // { provide: HAMMER_GESTURE_CONFIG, useClass: CustomHammerConfig }
     MemberEditResolver,
     PreventUnsavedChanges
