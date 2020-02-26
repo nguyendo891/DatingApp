@@ -44,6 +44,7 @@ import { MemberEditResolver } from "./_resolvers/member-edit.resolver";
 import { PreventUnsavedChanges } from "./_guards/prevent-unsaved-changes.guard";
 import { PhotoEditorComponent } from "./members/photo-editor/photo-editor.component";
 import { TimeAgoPipe } from "./_pipes/time-ago.pipe";
+import { ListsResolver } from "./_resolvers/lists.resolver";
 
 export function tokenGetter() {
   return localStorage.getItem("token");
@@ -105,7 +106,8 @@ export function tokenGetter() {
     // this fix the error of hammerJs for swiping left and right in angular 8
     // { provide: HAMMER_GESTURE_CONFIG, useClass: CustomHammerConfig }
     MemberEditResolver,
-    PreventUnsavedChanges
+    PreventUnsavedChanges,
+    ListsResolver
   ],
   bootstrap: [AppComponent]
 })
