@@ -158,12 +158,18 @@ namespace DatingApp.API.Controllers
 
             if (message.RecipientId != userId)
                 return Unauthorized();
-            message.IsRead = true;
-            message.DateRead = DateTime.Now;
+
+            this.SetIsReadMessage(message);
 
             await _repo.SaveAll();
 
             return NoContent();
+        }
+
+        private void SetIsReadMessage(Message message)
+        {
+            message.IsRead = true;
+            message.DateRead = DateTime.Now;
         }
     }
 }

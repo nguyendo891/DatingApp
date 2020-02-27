@@ -91,11 +91,7 @@ namespace DatingApp.API.Controllers
                 return NotFound();
             }
 
-            like = new Like
-            {
-                LikerId = id,
-                LikeeId = recipientId
-            };
+            like = this.GetNewLike(id, recipientId);
 
             _repo.Add<Like>(like);
 
@@ -105,6 +101,15 @@ namespace DatingApp.API.Controllers
             }
 
             return BadRequest("Failed to like user");
+        }
+
+        private Like GetNewLike(int id, int recipientId)
+        {
+            return new Like
+            {
+                LikerId = id,
+                LikeeId = recipientId
+            };
         }
     }
 }
