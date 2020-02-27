@@ -1,7 +1,8 @@
-import { Component, OnInit, Injectable } from "@angular/core";
+import { Component, OnInit, Injectable, OnDestroy } from "@angular/core";
 import { AuthService } from "../_services/auth.service";
 import { AlertifyService } from "../_services/alertify.service";
 import { Router } from "@angular/router";
+import { Subscription } from "rxjs";
 
 @Component({
   selector: "app-nav",
@@ -9,10 +10,11 @@ import { Router } from "@angular/router";
   styleUrls: ["./nav.component.css"]
 })
 @Injectable()
-export class NavComponent implements OnInit {
+export class NavComponent implements OnInit, OnDestroy {
   model: any = {};
   photoUrl: string;
-
+  currentPhotoUrlSub: Subscription;
+  loginSub: Subscription;
   constructor(
     public authService: AuthService,
     private alertify: AlertifyService,
@@ -20,13 +22,15 @@ export class NavComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    this.authService.currentPhotoUrl.subscribe(photoUrl => {
-      this.photoUrl = photoUrl;
-    });
+    this.currentPhotoUrlSub = this.authService.currentPhotoUrl.subscribe(
+      photoUrl => {
+        this.photoUrl = photoUrl;
+      }
+    );
   }
 
   login() {
-    this.authService.login(this.model).subscribe(
+    this.loginSub = this.authService.login(this.model).subscribe(
       next => {
         this.alertify.success("Logged in successfully");
       },
@@ -50,5 +54,10 @@ export class NavComponent implements OnInit {
     this.authService.currentUser = null;
     this.alertify.message("logged out");
     this.router.navigate(["/home"]);
+  }
+
+  ngOnDestroy(): void {
+    this.currentPhotoUrlSub.unsubscribe();
+    this.loginSub.unsubscribe();
   }
 }

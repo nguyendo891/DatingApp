@@ -1,7 +1,7 @@
-import { Injectable } from "@angular/core";
+import { Injectable, OnDestroy } from "@angular/core";
 import { environment } from "src/environments/environment";
 import { HttpClient, HttpHeaders, HttpParams } from "@angular/common/http";
-import { Observable } from "rxjs";
+import { Observable, Subscription } from "rxjs";
 import { User } from "../_models/user";
 import { PaginatedResult } from "../_models/pagination";
 import { map } from "rxjs/operators";
@@ -10,7 +10,9 @@ import { Message } from "../_models/Message";
 @Injectable({
   providedIn: "root"
 })
-export class UserService {
+export class UserService implements OnDestroy {
+  markAsReadSub: Subscription;
+
   baseUrl = environment.apiUrl;
 
   constructor(private http: HttpClient) {}
@@ -138,11 +140,15 @@ export class UserService {
   }
 
   markAsRead(userId: number, messageId: number) {
-    this.http
+    this.markAsReadSub = this.http
       .post(
         this.baseUrl + "users/" + userId + "/messages/" + messageId + "/read",
         {}
       )
       .subscribe();
+  }
+
+  ngOnDestroy(): void {
+    this.markAsReadSub.unsubscribe();
   }
 }

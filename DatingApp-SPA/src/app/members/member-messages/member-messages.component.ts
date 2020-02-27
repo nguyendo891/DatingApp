@@ -1,19 +1,22 @@
-import { Component, OnInit, Input } from "@angular/core";
+import { Component, OnInit, Input, OnDestroy } from "@angular/core";
 import { Message } from "src/app/_models/Message";
 import { AuthService } from "src/app/_services/auth.service";
 import { AlertifyService } from "src/app/_services/alertify.service";
 import { UserService } from "src/app/_services/user.service";
 import { tap } from "rxjs/operators";
+import { Subscription } from "rxjs";
 
 @Component({
   selector: "app-member-messages",
   templateUrl: "./member-messages.component.html",
   styleUrls: ["./member-messages.component.css"]
 })
-export class MemberMessagesComponent implements OnInit {
+export class MemberMessagesComponent implements OnInit, OnDestroy {
   @Input() recipientId: number;
   messages: Message[];
   newMessage: any = {};
+  getMessageThreadSub: Subscription;
+  sendMessageSub: Subscription;
 
   constructor(
     private userService: UserService,
@@ -27,7 +30,7 @@ export class MemberMessagesComponent implements OnInit {
 
   loadMessages() {
     const currentUserId = +this.authService.decodedToken.nameid;
-    this.userService
+    this.getMessageThreadSub = this.userService
       .getMessageThread(this.authService.decodedToken.nameid, this.recipientId)
       .pipe(
         tap(messages => {
@@ -53,7 +56,7 @@ export class MemberMessagesComponent implements OnInit {
 
   sendMessage() {
     this.newMessage.recipientId = this.recipientId;
-    this.userService
+    this.sendMessageSub = this.userService
       .sendMessage(this.authService.decodedToken.nameid, this.newMessage)
       .subscribe(
         (message: Message) => {
@@ -64,5 +67,10 @@ export class MemberMessagesComponent implements OnInit {
           this.alertify.error(error);
         }
       );
+  }
+
+  ngOnDestroy(): void {
+    this.getMessageThreadSub.unsubscribe();
+    this.sendMessageSub.unsubscribe();
   }
 }

@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from "@angular/core";
+import { Component, OnInit, ViewChild, OnDestroy } from "@angular/core";
 import { User } from "src/app/_models/user";
 import { UserService } from "src/app/_services/user.service";
 import { AlertifyService } from "src/app/_services/alertify.service";
@@ -9,17 +9,20 @@ import {
   NgxGalleryAnimation
 } from "@nomadreservations/ngx-gallery";
 import { TabsetComponent } from "ngx-bootstrap";
+import { Subscription } from "rxjs";
 
 @Component({
   selector: "app-member-detail",
   templateUrl: "./member-detail.component.html",
   styleUrls: ["./member-detail.component.css"]
 })
-export class MemberDetailComponent implements OnInit {
+export class MemberDetailComponent implements OnInit, OnDestroy {
   @ViewChild("memberTabs", { static: true }) memberTabs: TabsetComponent;
   user: User;
   galleryOptions: NgxGalleryOptions[];
   galleryImages: NgxGalleryImage[];
+  dataSubscription: Subscription;
+  queryParamsSubscription: Subscription;
 
   constructor(
     private userService: UserService,
@@ -31,15 +34,16 @@ export class MemberDetailComponent implements OnInit {
     // this route.data is used when using resolver,
     // the resolver will resolve  user object into the route,
     // therefore we dont have to call userService.getUser from component.
-    this.route.data.subscribe(data => {
+    this.dataSubscription = this.route.data.subscribe(data => {
       const user = "user";
       this.user = data[user];
     });
 
-    this.route.queryParams.subscribe(params => {
+    this.queryParamsSubscription = this.route.queryParams.subscribe(params => {
       const selectedTab = params["tab"];
       this.memberTabs.tabs[selectedTab > 0 ? selectedTab : 0].active = true;
     });
+
     this.galleryOptions = [
       {
         width: "500px",
@@ -69,5 +73,10 @@ export class MemberDetailComponent implements OnInit {
 
   selectTab(tabId: number) {
     this.memberTabs.tabs[tabId].active = true;
+  }
+
+  ngOnDestroy(): void {
+    this.dataSubscription.unsubscribe();
+    this.queryParamsSubscription.unsubscribe();
   }
 }
