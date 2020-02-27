@@ -26,8 +26,8 @@ export class PhotoEditorComponent implements OnInit, OnDestroy {
   hasBaseDropZoneOver: boolean;
   baseUrl = environment.apiUrl;
   currentMain: Photo;
-  setMainPhotoSub: Subscription;
-  deletePhotoSub: Subscription;
+  setMainPhotoSub: Subscription = new Subscription();
+  deletePhotoSub: Subscription = new Subscription();
 
   constructor(
     private authService: AuthService,

@@ -21,8 +21,8 @@ export class MemberDetailComponent implements OnInit, OnDestroy {
   user: User;
   galleryOptions: NgxGalleryOptions[];
   galleryImages: NgxGalleryImage[];
-  dataSubscription: Subscription;
-  queryParamsSubscription: Subscription;
+  dataSubscription: Subscription = new Subscription();
+  queryParamsSubscription: Subscription = new Subscription();
 
   constructor(
     private userService: UserService,

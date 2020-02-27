@@ -23,9 +23,9 @@ export class MemberEditComponent implements OnInit, OnDestroy {
   @ViewChild("editForm", { static: false }) editForm: NgForm;
   user: User;
   photoUrl: string;
-  dataSub: Subscription;
-  currentPhotoUrlSub: Subscription;
-  updateUserSub: Subscription;
+  dataSub: Subscription = new Subscription();
+  currentPhotoUrlSub: Subscription = new Subscription();
+  updateUserSub: Subscription = new Subscription();
 
   // this hostlistener is used to prevent the user
   // ,who is clicking accidentally while editing Profile.

@@ -13,8 +13,8 @@ import { Subscription } from "rxjs";
 export class NavComponent implements OnInit, OnDestroy {
   model: any = {};
   photoUrl: string;
-  currentPhotoUrlSub: Subscription;
-  loginSub: Subscription;
+  currentPhotoUrlSub: Subscription = new Subscription();
+  loginSub: Subscription = new Subscription();
   constructor(
     public authService: AuthService,
     private alertify: AlertifyService,

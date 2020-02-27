@@ -12,7 +12,7 @@ import { Subscription } from "rxjs";
 })
 export class MemberCardComponent implements OnInit, OnDestroy {
   @Input() user: User;
-  sendLikeSub: Subscription;
+  sendLikeSub: Subscription = new Subscription();
 
   constructor(
     private authService: AuthService,

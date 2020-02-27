@@ -16,7 +16,7 @@ export class ListsComponent implements OnInit, OnDestroy {
   users: User[];
   pagination: Pagination;
   likesParam: string;
-  dataSubscription: Subscription;
+  dataSubscription: Subscription = new Subscription();
   constructor(
     private authService: AuthService,
     private userService: UserService,

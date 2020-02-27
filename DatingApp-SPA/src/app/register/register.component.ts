@@ -25,8 +25,8 @@ import { Subscription } from "rxjs";
   styleUrls: ["./register.component.css"]
 })
 export class RegisterComponent implements OnInit, OnDestroy {
-  registerSub: Subscription;
-  loginSub: Subscription;
+  registerSub: Subscription = new Subscription();
+  loginSub: Subscription = new Subscription();
   @Output() cancelRegister = new EventEmitter();
   user: User;
   registerForm: FormGroup;

@@ -20,8 +20,8 @@ export class MemberListComponent implements OnInit, OnDestroy {
   ];
   userParams: any = {};
   pagination: Pagination;
-  dataSub: Subscription;
-  getUsersSub: Subscription;
+  dataSub: Subscription = new Subscription();
+  getUsersSub: Subscription = new Subscription();
 
   constructor(
     private userService: UserService,

@@ -16,9 +16,9 @@ export class MessagesComponent implements OnInit, OnDestroy {
   messages: Message[];
   pagination: Pagination;
   messageContainer = "Unread";
-  dataSub: Subscription;
-  getMessagesSub: Subscription;
-  deleteMessageSub: Subscription;
+  dataSub: Subscription = new Subscription();
+  getMessagesSub: Subscription = new Subscription();
+  deleteMessageSub: Subscription = new Subscription();
 
   constructor(
     private userService: UserService,

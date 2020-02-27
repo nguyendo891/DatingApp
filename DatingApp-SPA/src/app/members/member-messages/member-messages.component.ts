@@ -15,8 +15,8 @@ export class MemberMessagesComponent implements OnInit, OnDestroy {
   @Input() recipientId: number;
   messages: Message[];
   newMessage: any = {};
-  getMessageThreadSub: Subscription;
-  sendMessageSub: Subscription;
+  getMessageThreadSub: Subscription = new Subscription();
+  sendMessageSub: Subscription = new Subscription();
 
   constructor(
     private userService: UserService,

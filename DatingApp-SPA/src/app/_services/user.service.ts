@@ -11,7 +11,7 @@ import { Message } from "../_models/Message";
   providedIn: "root"
 })
 export class UserService implements OnDestroy {
-  markAsReadSub: Subscription;
+  markAsReadSub: Subscription = new Subscription();
 
   baseUrl = environment.apiUrl;
 
