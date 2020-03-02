@@ -1,22 +1,33 @@
-import { Component, OnInit, Input, OnDestroy } from "@angular/core";
+import {
+  Component,
+  OnInit,
+  Input,
+  OnDestroy,
+  DoCheck,
+  ElementRef
+} from "@angular/core";
 import { Message } from "src/app/_models/Message";
 import { AuthService } from "src/app/_services/auth.service";
 import { AlertifyService } from "src/app/_services/alertify.service";
 import { UserService } from "src/app/_services/user.service";
 import { tap } from "rxjs/operators";
-import { Subscription } from "rxjs";
+import { Subscription, Observable, Subject } from "rxjs";
+import * as _ from "lodash";
 
 @Component({
   selector: "app-member-messages",
   templateUrl: "./member-messages.component.html",
   styleUrls: ["./member-messages.component.css"]
 })
-export class MemberMessagesComponent implements OnInit, OnDestroy {
+export class MemberMessagesComponent implements OnInit, OnDestroy, DoCheck {
   @Input() recipientId: number;
   messages: Message[];
+  previousMessages: Message[];
   newMessage: any = {};
   getMessageThreadSub: Subscription = new Subscription();
   sendMessageSub: Subscription = new Subscription();
+  currentUserId = +this.authService.decodedToken.nameid;
+  el: ElementRef;
 
   constructor(
     private userService: UserService,
@@ -25,32 +36,51 @@ export class MemberMessagesComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit() {
-    this.loadMessages();
+    this.getMessageThreadSub = this.loadMessages().subscribe(
+      messages => {
+        this.messages = _.sortBy(messages, ["messageSent"]);
+      },
+      error => {
+        this.alertify.error(error);
+      }
+    );
   }
 
-  loadMessages() {
-    const currentUserId = +this.authService.decodedToken.nameid;
-    this.getMessageThreadSub = this.userService
+  /// THIS METHOD IS USED LATER
+  ngDoCheck() {
+    // if (
+    //   this.messages[this.messages.length - 1].recipientId != this.recipientId
+    // ) {
+    //   this.getMessageThreadSub = this.loadMessages()
+    //     .pipe(take(1))
+    //     .subscribe(
+    //       messages => {
+    //         this.messages = _.sortBy(messages, ["messageSent"]);
+    //         this.getMessageThreadSub.unsubscribe();
+    //       },
+    //       error => {
+    //         this.alertify.error(error);
+    //         this.getMessageThreadSub.unsubscribe();
+    //       }
+    //     );
+    // }
+  }
+
+  loadMessages(): Observable<Message[]> {
+    return this.userService
       .getMessageThread(this.authService.decodedToken.nameid, this.recipientId)
       .pipe(
         tap(messages => {
+          // tslint:disable-next-line: prefer-for-of
           for (let i = 0; i < messages.length; i++) {
             if (
               messages[i].isRead === false &&
-              messages[i].recipientId === currentUserId
+              messages[i].recipientId === this.currentUserId
             ) {
-              this.userService.markAsRead(currentUserId, messages[i].id);
+              this.userService.markAsRead(this.currentUserId, messages[i].id);
             }
           }
         })
-      )
-      .subscribe(
-        messages => {
-          this.messages = messages;
-        },
-        error => {
-          this.alertify.error(error);
-        }
       );
   }
 
@@ -60,7 +90,7 @@ export class MemberMessagesComponent implements OnInit, OnDestroy {
       .sendMessage(this.authService.decodedToken.nameid, this.newMessage)
       .subscribe(
         (message: Message) => {
-          this.messages.unshift(message);
+          this.messages.push(message);
           this.newMessage.content = "";
         },
         error => {
